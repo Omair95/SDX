@@ -1,0 +1,114 @@
+
+
+
+---
+testing node1:
+
+N1 = node1:start(1).
+N4 = node1:start(4,N1).
+N9 = node1:start(9,N4).
+N3 = node1:start(3,N9).
+
+N1 ! probe.
+N9 ! probe.
+---
+testing node2:
+
+N1 = node2:start(1).
+N4 = node2:start(4,N1).
+N9 = node2:start(9,N4).
+N3 = node2:start(3,N9).
+
+% couple secs for stabilization
+
+chordy:test(N3,17).
+---
+testing node3:
+
+N1 = node3:start(1).
+N4 = node3:start(4,N1).
+N9 = node3:start(9,N4).
+N3 = node3:start(3,N9).
+% couple secs for stabilization
+
+N1 ! stop.
+% wait a sec for failure handling
+N9 ! probe.
+---
+testing node4:
+% evaluate at each step
+
+N2 = node4:start(2).
+P = chordy:connect(N2).
+P ! {add,0,0}.
+P ! {add,1,1}.
+P ! {add,2,2}.
+N2 ! probe.
+N0 = node4:start(0,N2).
+N2 ! probe.
+N1 = node4:start(1,N2).
+N2 ! probe.
+N1 ! stop.
+N2 ! probe.
+N0 ! stop.
+N2 ! probe.
+
+
+--- dump(4)
+1> N2 = node4:start(2).
+<0.37.0>
+2> P = chordy:connect(N2).
+<0.39.0>
+3> P ! {add,0,0}.
+{add,0,0}
+4> P ! {add,1,1}.
+{add,1,1}
+[Add] Key added correctly
+[Add] Key added correctly
+5> P ! {add,2,2}.
+[Add] Key added correctly
+{add,2,2}
+6> N2 ! probe.
+Create probe 2! Replica: [{2,2},{1,1},{0,0}]
+probe
+Received probe 2 in 0 ms Ring: [2]
+7> N0 = node4:start(0,N2).
+<0.45.0>
+8> N2 ! probe.
+Create probe 2! Replica: [{0,0}]
+Forward probe 2! Replica: [{2,2},{1,1}]
+probe
+Received probe 2 in 0 ms Ring: [0,2]
+9> N1 = node4:start(1,N2).
+<0.48.0>
+10> N2 ! probe.
+Create probe 2! Replica: [{1,1}]
+Forward probe 2! Replica: [{2,2},{1,1}]
+Forward probe 2! Replica: [{0,0}]
+probe
+Received probe 2 in 0 ms Ring: [1,0,2]
+11> N2 ! probe.
+Create probe 2! Replica: [{1,1}]
+Forward probe 2! Replica: [{2,2},{1,1}]
+Forward probe 2! Replica: [{0,0}]
+probe
+Received probe 2 in 0 ms Ring: [1,0,2]
+12> N2 ! probe.
+Create probe 2! Replica: [{1,1}]
+Forward probe 2! Replica: [{2,2},{1,1}]
+Forward probe 2! Replica: [{0,0}]
+probe
+Received probe 2 in 0 ms Ring: [1,0,2]
+13> N1 ! stop.
+stop
+14> N2 ! probe.
+Create probe 2! Replica: [{0,0}]
+Forward probe 2! Replica: [{1,1},{2,2}]
+probe
+Received probe 2 in 0 ms Ring: [0,2]
+15> N0 ! stop.
+stop
+16> N2 ! probe.
+Create probe 2! Replica: [{0,0},{1,1},{2,2}]
+probe
+Received probe 2 in 0 ms Ring: [2]
